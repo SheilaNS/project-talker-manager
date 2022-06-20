@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { readContent } = require('./utils/fs');
 const { getToken } = require('./utils/token');
+const { validEmail } = require('./middlewares/emailValidation');
+const { validPass } = require('./middlewares/passwordValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -36,9 +38,8 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(talker[0]);
 });
 
-app.post('/login', (_req, res) => {
-  // const { email, password } = req.body;
-
+// middlewares de validação feitos com a ajuda do Danillo Gonçalves
+app.post('/login', validEmail, validPass, (_req, res) => {
   const token = getToken(16);
   return res.status(200).json({ token: `${token}` });
 });
