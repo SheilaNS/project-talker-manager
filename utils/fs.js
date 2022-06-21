@@ -19,11 +19,20 @@ const updateData = async (talker) => {
   
   const newTalkersStr = JSON.stringify(noTalker);
   await fs.writeFile('./talker.json', newTalkersStr);
-  await readContent();
+};
+
+const deleteData = async (talker) => {
+  const talkers = await readContent();
+
+  const noTalker = talkers.filter((t) => Number(t.id) !== Number(talker.id));
+  
+  const newTalkersStr = JSON.stringify(noTalker);
+  await fs.writeFile('./talker.json', newTalkersStr);
 };
 
 module.exports = {
   writeContent,
   readContent,
   updateData,
+  deleteData,
 };
