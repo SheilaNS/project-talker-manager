@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readContent, writeContent } = require('./utils/fs');
+const { readContent, writeContent, updateData } = require('./utils/fs');
 const { getToken } = require('./utils/token');
 const { validEmail } = require('./middlewares/emailValidation');
 const { validPass } = require('./middlewares/passwordValidation');
@@ -70,3 +70,24 @@ app.post(
   return res.status(201).json(talker);
 },
 );
+
+app.put('/talker/:id',
+  validToken,
+  validName,
+  validAge,
+  validTalk,
+  validWatchedAt,
+  validRate,
+  async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+
+  const talkers = await readContent();
+  const talkerIndex = talkers.findIndex((t) => Number(t.id) === Number(id));
+  
+  talkers[talkerIndex] = { name, age, id: Number(id), talk };
+  
+  await updateData(talkers[talkerIndex]);
+
+  return res.status(200).json(talkers[talkerIndex]);
+});
