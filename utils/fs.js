@@ -2,16 +2,16 @@ const fs = require('fs/promises');
 
 const readContent = async () => JSON.parse(await fs.readFile('./talker.json'));
 
-const writeContentFile = async (data) => {
-  const teams = await readContent();
+const writeContent = async (talker) => {
+  const talkers = await readContent();
 
-  teams.push(data);
+  talkers.push(talker);
 
-  const teamsToStr = JSON.stringify(teams);
-  await fs.writeFile('./teams.json', teamsToStr);
+  const talkersStr = JSON.stringify(talkers);
+  await fs.writeFile('./talker.json', talkersStr);
 };
 
 module.exports = {
-  writeContentFile,
+  writeContent,
   readContent,
 };

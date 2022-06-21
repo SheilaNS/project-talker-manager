@@ -1,9 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readContent } = require('./utils/fs');
+const { readContent, writeContent } = require('./utils/fs');
 const { getToken } = require('./utils/token');
 const { validEmail } = require('./middlewares/emailValidation');
 const { validPass } = require('./middlewares/passwordValidation');
+const { validToken } = require('./middlewares/tokenValidation');
+const { validName } = require('./middlewares/nameValidation');
+const { validAge } = require('./middlewares/ageValidation');
+const { validWatchedAt } = require('./middlewares/watchedAtValidation');
+const { validTalk } = require('./middlewares/talkValidation');
+const { validRate } = require('./middlewares/rateValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -43,3 +49,24 @@ app.post('/login', validEmail, validPass, (_req, res) => {
   const token = getToken(16);
   return res.status(200).json({ token: `${token}` });
 });
+
+app.post(
+  '/talker',
+  validToken,
+  validName,
+  validAge,
+  validTalk,
+  validWatchedAt,
+  validRate,
+  async (req, res) => {
+  const { name, age, talk } = req.body;
+
+  const talkers = await readContent();
+  const newId = talkers.length + 1;
+
+  const talker = { name, age, talk, id: newId };
+  await writeContent(talker);
+
+  return res.status(201).json(talker);
+},
+);
