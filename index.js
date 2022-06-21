@@ -31,6 +31,18 @@ app.get('/talker', async (_req, res) => {
   return res.status(200).json(talkers);
 });
 
+app.get('/talker/search', validToken, async (req, res) => {
+  const { q } = req.query;
+
+  const talkers = await readContent();
+
+  if (!q || q === '') res.status(200).json(talkers);
+
+  const searched = talkers.filter((elem) => elem.name.includes(q));
+
+  return res.status(200).json(searched);
+});
+
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const talkers = await readContent();
